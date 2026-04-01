@@ -1,21 +1,33 @@
-import React, { useEffect, useState } from "react";
-import { getUsers } from "./services/userService";
+import React, { useState } from "react";
+import { loginUser } from "./services/userService";
 
 function App() {
-  const [users, setUsers] = useState([]);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-  useEffect(() => {
-    getUsers().then((res) => {
-      setUsers(res.data);
-    });
-  }, []);
+  const handleLogin = () => {
+    loginUser({ email, password })
+      .then(res => alert(res.data))
+      .catch(err => console.log(err));
+  };
 
   return (
     <div>
-      <h1>Users List</h1>
-      {users.map((u) => (
-        <p key={u.id}>{u.name} - {u.email}</p>
-      ))}
+      <h2>Login</h2>
+
+      <input 
+        type="email" 
+        placeholder="Email"
+        onChange={(e) => setEmail(e.target.value)}
+      />
+
+      <input 
+        type="password" 
+        placeholder="Password"
+        onChange={(e) => setPassword(e.target.value)}
+      />
+
+      <button onClick={handleLogin}>Login</button>
     </div>
   );
 }
