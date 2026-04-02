@@ -7,9 +7,15 @@ function App() {
 
   const handleLogin = () => {
     loginUser({ email, password })
-      .then(res => alert(res.data))
-      .catch(err => console.log(err));
-  };
+      .then(res => {
+        localStorage.setItem("token", res.data);
+        alert("Login Success");
+      })
+      .catch(err => {
+        alert("Login Failed ❌");
+        console.log(err);
+      });
+  }; // ✅ MISSING BRACKET FIXED
 
   return (
     <div>
