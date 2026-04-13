@@ -1,39 +1,33 @@
-import React, { useState } from "react";
-import { loginUser } from "./services/userService";
+import React, { useEffect, useState } from "react";
+import { getNews } from "./services/newsService";
 
 function App() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [news, setNews] = useState([]);
 
-  const handleLogin = () => {
-    loginUser({ email, password })
+  useEffect(() => {
+    getNews()
       .then(res => {
-        localStorage.setItem("token", res.data);
-        alert("Login Success");
+        console.log(res.data); // check response
+        setNews(res.data.articles);
       })
-      .catch(err => {
-        alert("Login Failed ❌");
-        console.log(err);
-      });
-  }; // ✅ MISSING BRACKET FIXED
+      .catch(err => console.log(err)); // ✅ fixed
+  }, []);
 
   return (
     <div>
-      <h2>Login</h2>
+      <h2>Top News</h2>
 
-      <input 
-        type="email" 
-        placeholder="Email"
-        onChange={(e) => setEmail(e.target.value)}
-      />
-
-      <input 
-        type="password" 
-        placeholder="Password"
-        onChange={(e) => setPassword(e.target.value)}
-      />
-
-      <button onClick={handleLogin}>Login</button>
+      {news && news.length > 0 ? (
+        news.map((item, index) => (
+          <div key={index}>
+            <h3>{item.title}</h3>
+            <p>{item.description}</p>
+            <hr />
+          </div>
+        ))
+      ) : (
+        <p>No news available</p>
+      )}
     </div>
   );
 }
