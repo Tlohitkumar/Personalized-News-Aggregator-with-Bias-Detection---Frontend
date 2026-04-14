@@ -1,33 +1,30 @@
 import React, { useEffect, useState } from "react";
 import { getNews } from "./services/newsService";
+import "./App.css";
 
 function App() {
   const [news, setNews] = useState([]);
 
   useEffect(() => {
     getNews()
-      .then(res => {
-        console.log(res.data); // check response
-        setNews(res.data.articles);
-      })
-      .catch(err => console.log(err)); // ✅ fixed
+      .then(res => setNews(res.data.articles))
+      .catch(err => console.log(err));
   }, []);
 
   return (
-    <div>
-      <h2>Top News</h2>
+    <div className="container">
+      <h1>📰 Top News</h1>
 
-      {news && news.length > 0 ? (
-        news.map((item, index) => (
-          <div key={index}>
+      <div className="news-grid">
+        {news.map((item, index) => (
+          <div className="card" key={index}>
+            <img src={item.urlToImage || "https://via.placeholder.com/300"} alt="news" />
             <h3>{item.title}</h3>
             <p>{item.description}</p>
-            <hr />
+            <a href={item.url} target="_blank" rel="noreferrer">Read More</a>
           </div>
-        ))
-      ) : (
-        <p>No news available</p>
-      )}
+        ))}
+      </div>
     </div>
   );
 }
