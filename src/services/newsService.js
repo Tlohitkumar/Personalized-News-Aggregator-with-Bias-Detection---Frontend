@@ -10,6 +10,14 @@ const getAuthHeader = () => {
   };
 };
 
-export const getNews = () => {
-  return axios.get(API_URL, getAuthHeader());
+export const getNews = (keyword, category) => {
+  let url = "http://localhost:8080/api/news";
+
+  if (keyword) {
+    url += `?keyword=${keyword}`;
+  } else if (category) {
+    url += `?category=${category}`;
+  }
+
+  return axios.get(url, getAuthHeader());
 };
