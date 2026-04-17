@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { getNews } from "./services/newsService";
+import axios from "axios";
 import "./App.css";
 
 function App() {
@@ -7,12 +8,13 @@ function App() {
   const [keyword, setKeyword] = useState("");
   const [favorites, setFavorites] = useState([]);
 
-  // 🔄 Load news + favorites on start
+  const userEmail = "lohit@gmail.com";
+
+  // 🔄 Load news + favorites
   useEffect(() => {
     loadNews();
 
-    const saved = JSON.parse(localStorage.getItem("favorites")) || [];
-    setFavorites(saved);
+    loadFavorites();
   }, []);
 
   // 🔍 Load news
@@ -22,11 +24,40 @@ function App() {
       .catch(err => console.log(err));
   };
 
-  // ❤️ Add favorite
+  // ❤️ Load favorites from DB
+  const loadFavorites = () => {
+    axios
+      .get(`http://localhost:8080/api/favorites/${userEmail}`)
+      .then(res => setFavorites(res.data))
+      .catch(err => console.log(err));
+  };
+
+  // ❤️ Save favorite
   const addFavorite = (item) => {
-    const updated = [...favorites, item];
-    setFavorites(updated);
-    localStorage.setItem("favorites", JSON.stringify(updated));
+    const fav = {
+      title: item.title,
+      url: item.url,
+      imageUrl: item.urlToImage,
+      userEmail: userEmail,
+    };
+
+    axios
+      .post("http://localhost:8080/api/favorites", fav)
+      .then(() => {
+        alert("Saved ❤️");
+        loadFavorites(); // refresh list
+      })
+      .catch(err => console.log(err));
+  };
+
+  // ❌ Delete favorite
+  const deleteFavorite = (id) => {
+    axios
+      .delete(`http://localhost:8080/api/favorites/${id}`)
+      .then(() => {
+        loadFavorites(); // refresh after delete
+      })
+      .catch(err => console.log(err));
   };
 
   // 🔐 Logout
@@ -55,12 +86,18 @@ function App() {
 
       {/* 📂 Categories */}
       <div>
-        <button onClick={() => getNews(null, "sports").then(res => setNews(res.data.articles))}>Sports</button>
-        <button onClick={() => getNews(null, "technology").then(res => setNews(res.data.articles))}>Tech</button>
-        <button onClick={() => getNews(null, "business").then(res => setNews(res.data.articles))}>Business</button>
+        <button onClick={() => getNews(null, "sports").then(res => setNews(res.data.articles))}>
+          Sports
+        </button>
+        <button onClick={() => getNews(null, "technology").then(res => setNews(res.data.articles))}>
+          Tech
+        </button>
+        <button onClick={() => getNews(null, "business").then(res => setNews(res.data.articles))}>
+          Business
+        </button>
       </div>
 
-      {/* 📰 News */}
+      {/* 📰 News Section */}
       <div className="news-grid">
         {news.map((item, index) => (
           <div className="card" key={index}>
@@ -81,13 +118,24 @@ function App() {
         ))}
       </div>
 
-      {/* ❤️ Favorites */}
-      <h2>❤️ Favorites</h2>
+      {/* ❤️ Favorites Section */}
+      <h2>❤️ Favorites (DB)</h2>
 
       <div className="news-grid">
         {favorites.map((item, index) => (
           <div className="card" key={index}>
+            <img
+              src={item.imageUrl || "https://via.placeholder.com/300"}
+              alt="fav"
+            />
             <h3>{item.title}</h3>
+
+            <a href={item.url} target="_blank" rel="noreferrer">
+              Read More
+            </a>
+
+            <br />
+            <button onClick={() => deleteFavorite(item.id)}>❌ Remove</button>
           </div>
         ))}
       </div>
