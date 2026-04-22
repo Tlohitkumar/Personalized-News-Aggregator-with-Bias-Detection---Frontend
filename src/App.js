@@ -97,40 +97,39 @@ function App() {
         </button>
       </div>
 
-      {/* 📰 News Section */}
-      <div className="news-grid">
-        {news.map((item, index) => (
-          <div className="card" key={index}>
-            <img
-              src={item.urlToImage || "https://via.placeholder.com/300"}
-              alt="news"
-            />
-            <h3>{item.title}</h3>
-            <p>{item.description}</p>
+     {/* 📰 News Section */}
+<div className="news-grid">
+  {news.map((item, index) => (
+    <div className="card" key={index}>
+      
+      <img
+        src={item.urlToImage || "https://via.placeholder.com/300"}
+        alt="news"
+      />
 
-	    {/* ✅ ADD HERE */}
- 	   <p
-  className={
-    item.sentiment.includes("Positive")
-      ? "positive"
-      : item.sentiment.includes("Negative")
-      ? "negative"
-      : "neutral"
-  }
->
-  <b>AI:</b> {item.sentiment}
-</p>
+      <h3>{item.title}</h3>
 
-            <a href={item.url} target="_blank" rel="noreferrer">
-              Read More
-            </a>
+      <p>{item.description}</p>
 
-            <br />
-            <button onClick={() => addFavorite(item)}>❤️ Save</button>
-          </div>
-        ))}
-      </div>
+      {/* 🤖 AI Sentiment */}
+      <p><b>AI:</b> {item.sentiment}</p>
 
+      {/* ⚖️ Bias Detection */}
+      <p><b>Bias:</b> {item.bias}</p>
+
+      <a href={item.url} target="_blank" rel="noreferrer">
+        Read More
+      </a>
+
+      <br />
+
+      <button onClick={() => addFavorite(item)}>
+        ❤️ Save
+      </button>
+
+    </div>
+  ))}
+</div>
       {/* ❤️ Favorites Section */}
       <h2>❤️ Favorites (DB)</h2>
 
