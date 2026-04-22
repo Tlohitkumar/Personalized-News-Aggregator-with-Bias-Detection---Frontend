@@ -108,6 +108,19 @@ function App() {
             <h3>{item.title}</h3>
             <p>{item.description}</p>
 
+	    {/* ✅ ADD HERE */}
+ 	   <p
+  className={
+    item.sentiment.includes("Positive")
+      ? "positive"
+      : item.sentiment.includes("Negative")
+      ? "negative"
+      : "neutral"
+  }
+>
+  <b>AI:</b> {item.sentiment}
+</p>
+
             <a href={item.url} target="_blank" rel="noreferrer">
               Read More
             </a>
