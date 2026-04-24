@@ -10,29 +10,27 @@ function App() {
 
   const userEmail = "lohit@gmail.com";
 
-  // 🔄 Load news + favorites
   useEffect(() => {
     loadNews();
-
     loadFavorites();
   }, []);
 
-  // 🔍 Load news
+  // 🔍 Load News
   const loadNews = () => {
     getNews(keyword)
-      .then(res => setNews(res.data.articles))
-      .catch(err => console.log(err));
+      .then((res) => setNews(res.data.articles))
+      .catch((err) => console.log(err));
   };
 
-  // ❤️ Load favorites from DB
+  // ❤️ Load Favorites
   const loadFavorites = () => {
     axios
       .get(`http://localhost:8080/api/favorites/${userEmail}`)
-      .then(res => setFavorites(res.data))
-      .catch(err => console.log(err));
+      .then((res) => setFavorites(res.data))
+      .catch((err) => console.log(err));
   };
 
-  // ❤️ Save favorite
+  // ❤️ Save Favorite
   const addFavorite = (item) => {
     const fav = {
       title: item.title,
@@ -43,21 +41,16 @@ function App() {
 
     axios
       .post("http://localhost:8080/api/favorites", fav)
-      .then(() => {
-        alert("Saved ❤️");
-        loadFavorites(); // refresh list
-      })
-      .catch(err => console.log(err));
+      .then(() => loadFavorites())
+      .catch((err) => console.log(err));
   };
 
-  // ❌ Delete favorite
+  // ❌ Delete Favorite
   const deleteFavorite = (id) => {
     axios
       .delete(`http://localhost:8080/api/favorites/${id}`)
-      .then(() => {
-        loadFavorites(); // refresh after delete
-      })
-      .catch(err => console.log(err));
+      .then(() => loadFavorites())
+      .catch((err) => console.log(err));
   };
 
   // 🔐 Logout
@@ -66,9 +59,40 @@ function App() {
     window.location.reload();
   };
 
+  // 📊 Dashboard Analytics
+  const totalNews = news.length;
+
+  const positiveCount = news.filter(
+    (item) => item.sentiment && item.sentiment.includes("Positive")
+  ).length;
+
+  const negativeCount = news.filter(
+    (item) => item.sentiment && item.sentiment.includes("Negative")
+  ).length;
+
+  const neutralCount = news.filter(
+    (item) => item.sentiment && item.sentiment.includes("Neutral")
+  ).length;
+
+  const avgTrust =
+    news.length > 0
+      ? Math.round(
+          news.reduce((sum, item) => sum + (item.trust || 0), 0) / news.length
+        )
+      : 0;
+
   return (
     <div className="container">
       <h1>📰 Top News</h1>
+
+      {/* 📊 Dashboard */}
+      <div className="dashboard">
+        <div className="dash-card">📰 Total: {totalNews}</div>
+        <div className="dash-card">😊 Positive: {positiveCount}</div>
+        <div className="dash-card">😡 Negative: {negativeCount}</div>
+        <div className="dash-card">😐 Neutral: {neutralCount}</div>
+        <div className="dash-card">🛡️ Avg Trust: {avgTrust}%</div>
+      </div>
 
       {/* 🔐 Logout */}
       <button onClick={handleLogout}>Logout</button>
@@ -84,54 +108,43 @@ function App() {
         <button onClick={loadNews}>Search</button>
       </div>
 
-      {/* 📂 Categories */}
-      <div>
-        <button onClick={() => getNews(null, "sports").then(res => setNews(res.data.articles))}>
-          Sports
-        </button>
-        <button onClick={() => getNews(null, "technology").then(res => setNews(res.data.articles))}>
-          Tech
-        </button>
-        <button onClick={() => getNews(null, "business").then(res => setNews(res.data.articles))}>
-          Business
-        </button>
+      {/* 📰 News Section */}
+      <div className="news-grid">
+        {news.map((item, index) => (
+          <div className="card" key={index}>
+            <img
+              src={item.urlToImage || "https://via.placeholder.com/300"}
+              alt="news"
+            />
+
+            <h3>{item.title}</h3>
+
+            <p>{item.description}</p>
+
+            {/* 🤖 AI Report */}
+            <div className="ai-box">
+              <h4>🧠 AI Report</h4>
+              <p><b>Sentiment:</b> {item.sentiment}</p>
+              <p><b>Bias:</b> {item.bias}</p>
+              <p><b>Trust:</b> {item.trust}%</p>
+              <p><b>Summary:</b> {item.summary}</p>
+            </div>
+
+            <a href={item.url} target="_blank" rel="noreferrer">
+              Read More
+            </a>
+
+            <br />
+
+            <button onClick={() => addFavorite(item)}>
+              ❤️ Save
+            </button>
+          </div>
+        ))}
       </div>
 
-     {/* 📰 News Section */}
-<div className="news-grid">
-  {news.map((item, index) => (
-    <div className="card" key={index}>
-      
-      <img
-        src={item.urlToImage || "https://via.placeholder.com/300"}
-        alt="news"
-      />
-
-      <h3>{item.title}</h3>
-
-      <p>{item.description}</p>
-
-      {/* 🤖 AI Sentiment */}
-      <p><b>AI:</b> {item.sentiment}</p>
-
-      {/* ⚖️ Bias Detection */}
-      <p><b>Bias:</b> {item.bias}</p>
-
-      <a href={item.url} target="_blank" rel="noreferrer">
-        Read More
-      </a>
-
-      <br />
-
-      <button onClick={() => addFavorite(item)}>
-        ❤️ Save
-      </button>
-
-    </div>
-  ))}
-</div>
-      {/* ❤️ Favorites Section */}
-      <h2>❤️ Favorites (DB)</h2>
+      {/* ❤️ Favorites */}
+      <h2>❤️ Favorites</h2>
 
       <div className="news-grid">
         {favorites.map((item, index) => (
@@ -140,6 +153,7 @@ function App() {
               src={item.imageUrl || "https://via.placeholder.com/300"}
               alt="fav"
             />
+
             <h3>{item.title}</h3>
 
             <a href={item.url} target="_blank" rel="noreferrer">
@@ -147,7 +161,10 @@ function App() {
             </a>
 
             <br />
-            <button onClick={() => deleteFavorite(item.id)}>❌ Remove</button>
+
+            <button onClick={() => deleteFavorite(item.id)}>
+              ❌ Delete
+            </button>
           </div>
         ))}
       </div>

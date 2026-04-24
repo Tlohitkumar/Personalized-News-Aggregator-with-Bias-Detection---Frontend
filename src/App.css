@@ -94,6 +94,21 @@ button {
   font-weight: bold;
 }
 
+.dashboard {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+  margin: 15px 0;
+}
+
+.dash-card {
+  background: #eef3ff;
+  padding: 12px;
+  border-radius: 10px;
+  font-weight: bold;
+  border: 1px solid #dbe4ff;
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
