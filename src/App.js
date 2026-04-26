@@ -16,6 +16,7 @@ function App() {
   const [keyword, setKeyword] = useState("");
   const [favorites, setFavorites] = useState([]);
   const [interest, setInterest] = useState("technology");
+  const [darkMode, setDarkMode] = useState(false);
 
   const userEmail = "lohit@gmail.com";
 
@@ -24,7 +25,7 @@ function App() {
     loadFavorites();
   }, []);
 
-  // 📰 Load default news
+  // 📰 Load News
   const loadNews = () => {
     getNews(keyword)
       .then((res) => setNews(res.data.articles))
@@ -38,7 +39,7 @@ function App() {
       .catch((err) => console.log(err));
   };
 
-  // ❤️ Load favorites
+  // ❤️ Load Favorites
   const loadFavorites = () => {
     axios
       .get(`http://localhost:8080/api/favorites/${userEmail}`)
@@ -46,7 +47,7 @@ function App() {
       .catch((err) => console.log(err));
   };
 
-  // ❤️ Save favorite
+  // ❤️ Save Favorite
   const addFavorite = (item) => {
     const fav = {
       title: item.title,
@@ -61,7 +62,7 @@ function App() {
       .catch((err) => console.log(err));
   };
 
-  // ❌ Delete favorite
+  // ❌ Delete Favorite
   const deleteFavorite = (id) => {
     axios
       .delete(`http://localhost:8080/api/favorites/${id}`)
@@ -105,8 +106,16 @@ function App() {
   ];
 
   return (
-    <div className="container">
+    <div className={darkMode ? "container dark" : "container"}>
       <h1>📰 Top News</h1>
+
+      {/* 🌙 Dark Mode Toggle */}
+      <button onClick={() => setDarkMode(!darkMode)}>
+        {darkMode ? "☀️ Light Mode" : "🌙 Dark Mode"}
+      </button>
+
+      {/* 🔐 Logout */}
+      <button onClick={handleLogout}>Logout</button>
 
       {/* 📊 Dashboard */}
       <div className="dashboard">
@@ -140,9 +149,6 @@ function App() {
         </PieChart>
       </div>
 
-      {/* 🔐 Logout */}
-      <button onClick={handleLogout}>Logout</button>
-
       {/* 🔍 Search */}
       <div>
         <input
@@ -173,7 +179,7 @@ function App() {
 
       <h2>👤 Recommended For You: {interest}</h2>
 
-      {/* 📰 News Section */}
+      {/* 📰 News */}
       <div className="news-grid">
         {news.map((item, index) => (
           <div className="card" key={index}>
@@ -183,8 +189,10 @@ function App() {
             />
 
             <h3>{item.title}</h3>
+
             <p>{item.description}</p>
 
+            {/* 🤖 AI Report */}
             <div className="ai-box">
               <h4>🧠 AI Report</h4>
               <p><b>Sentiment:</b> {item.sentiment}</p>
