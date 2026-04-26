@@ -148,6 +148,50 @@ button:hover {
   box-shadow: 0 6px 14px rgba(0,0,0,0.08);
 }
 
+.login-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg,#1e3c72,#2a5298);
+  color: white;
+  padding: 30px;
+}
+
+.hero {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.login-wrapper {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.login-card,
+.feature-card {
+  background: rgba(255,255,255,0.12);
+  padding: 25px;
+  border-radius: 15px;
+  backdrop-filter: blur(8px);
+}
+
+.login-card input {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border-radius: 8px;
+  border: none;
+}
+
+.login-card button {
+  width: 100%;
+  padding: 12px;
+  background: #00c853;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);

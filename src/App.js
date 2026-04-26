@@ -1,8 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { getNews } from "./services/newsService";
 import axios from "axios";
-import "./App.css";
-
 import {
   PieChart,
   Pie,
@@ -11,7 +8,17 @@ import {
   Legend
 } from "recharts";
 
+import { getNews } from "./services/newsService";
+import LoginPage from "./LoginPage";
+import "./App.css";
+
 function App() {
+  // 🔐 Login State
+  const [isLoggedIn, setIsLoggedIn] = useState(
+    localStorage.getItem("token") ? true : false
+  );
+
+  // 📰 Main States
   const [news, setNews] = useState([]);
   const [keyword, setKeyword] = useState("");
   const [favorites, setFavorites] = useState([]);
@@ -20,10 +27,13 @@ function App() {
 
   const userEmail = "lohit@gmail.com";
 
+  // Load after login
   useEffect(() => {
-    loadNews();
-    loadFavorites();
-  }, []);
+    if (isLoggedIn) {
+      loadNews();
+      loadFavorites();
+    }
+  }, [isLoggedIn]);
 
   // 📰 Load News
   const loadNews = () => {
@@ -73,7 +83,7 @@ function App() {
   // 🔐 Logout
   const handleLogout = () => {
     localStorage.removeItem("token");
-    window.location.reload();
+    setIsLoggedIn(false);
   };
 
   // 📊 Dashboard Data
@@ -105,11 +115,16 @@ function App() {
     { name: "Neutral", value: neutralCount },
   ];
 
+  // 🔐 Show Login Page First
+  if (!isLoggedIn) {
+    return <LoginPage onLogin={() => setIsLoggedIn(true)} />;
+  }
+
   return (
     <div className={darkMode ? "container dark" : "container"}>
       <h1>📰 Top News</h1>
 
-      {/* 🌙 Dark Mode Toggle */}
+      {/* 🌙 Theme */}
       <button onClick={() => setDarkMode(!darkMode)}>
         {darkMode ? "☀️ Light Mode" : "🌙 Dark Mode"}
       </button>
@@ -143,7 +158,6 @@ function App() {
             <Cell fill="#f44336" />
             <Cell fill="#ff9800" />
           </Pie>
-
           <Tooltip />
           <Legend />
         </PieChart>
@@ -189,7 +203,6 @@ function App() {
             />
 
             <h3>{item.title}</h3>
-
             <p>{item.description}</p>
 
             {/* 🤖 AI Report */}
