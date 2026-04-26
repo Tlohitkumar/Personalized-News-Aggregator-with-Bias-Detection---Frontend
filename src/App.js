@@ -15,6 +15,7 @@ function App() {
   const [news, setNews] = useState([]);
   const [keyword, setKeyword] = useState("");
   const [favorites, setFavorites] = useState([]);
+  const [interest, setInterest] = useState("technology");
 
   const userEmail = "lohit@gmail.com";
 
@@ -23,12 +24,21 @@ function App() {
     loadFavorites();
   }, []);
 
+  // 📰 Load default news
   const loadNews = () => {
     getNews(keyword)
       .then((res) => setNews(res.data.articles))
       .catch((err) => console.log(err));
   };
 
+  // 👤 Personalized Feed
+  const loadPersonalizedFeed = () => {
+    getNews(null, interest)
+      .then((res) => setNews(res.data.articles))
+      .catch((err) => console.log(err));
+  };
+
+  // ❤️ Load favorites
   const loadFavorites = () => {
     axios
       .get(`http://localhost:8080/api/favorites/${userEmail}`)
@@ -36,6 +46,7 @@ function App() {
       .catch((err) => console.log(err));
   };
 
+  // ❤️ Save favorite
   const addFavorite = (item) => {
     const fav = {
       title: item.title,
@@ -50,6 +61,7 @@ function App() {
       .catch((err) => console.log(err));
   };
 
+  // ❌ Delete favorite
   const deleteFavorite = (id) => {
     axios
       .delete(`http://localhost:8080/api/favorites/${id}`)
@@ -57,6 +69,7 @@ function App() {
       .catch((err) => console.log(err));
   };
 
+  // 🔐 Logout
   const handleLogout = () => {
     localStorage.removeItem("token");
     window.location.reload();
@@ -84,7 +97,7 @@ function App() {
         )
       : 0;
 
-  // 📈 Step 3 Chart Data
+  // 📈 Chart Data
   const chartData = [
     { name: "Positive", value: positiveCount },
     { name: "Negative", value: negativeCount },
@@ -95,7 +108,7 @@ function App() {
     <div className="container">
       <h1>📰 Top News</h1>
 
-      {/* Dashboard */}
+      {/* 📊 Dashboard */}
       <div className="dashboard">
         <div className="dash-card">📰 Total: {totalNews}</div>
         <div className="dash-card">😊 Positive: {positiveCount}</div>
@@ -104,7 +117,7 @@ function App() {
         <div className="dash-card">🛡️ Avg Trust: {avgTrust}%</div>
       </div>
 
-      {/* 📈 Step 4 Chart UI */}
+      {/* 📈 Chart */}
       <div className="chart-box">
         <h2>📊 News Sentiment Analysis</h2>
 
@@ -127,10 +140,10 @@ function App() {
         </PieChart>
       </div>
 
-      {/* Logout */}
+      {/* 🔐 Logout */}
       <button onClick={handleLogout}>Logout</button>
 
-      {/* Search */}
+      {/* 🔍 Search */}
       <div>
         <input
           type="text"
@@ -141,7 +154,26 @@ function App() {
         <button onClick={loadNews}>Search</button>
       </div>
 
-      {/* News */}
+      {/* 👤 Personalized Feed */}
+      <div>
+        <select
+          value={interest}
+          onChange={(e) => setInterest(e.target.value)}
+        >
+          <option value="technology">Technology</option>
+          <option value="sports">Sports</option>
+          <option value="business">Business</option>
+          <option value="health">Health</option>
+        </select>
+
+        <button onClick={loadPersonalizedFeed}>
+          Personalized Feed
+        </button>
+      </div>
+
+      <h2>👤 Recommended For You: {interest}</h2>
+
+      {/* 📰 News Section */}
       <div className="news-grid">
         {news.map((item, index) => (
           <div className="card" key={index}>
@@ -157,8 +189,8 @@ function App() {
               <h4>🧠 AI Report</h4>
               <p><b>Sentiment:</b> {item.sentiment}</p>
               <p><b>Bias:</b> {item.bias}</p>
+              <p><b>Fake Check:</b> {item.fakeStatus}</p>
               <p><b>Trust:</b> {item.trust}%</p>
-	      <p><b>Fake Check:</b> {item.fakeStatus}</p>
               <p><b>Summary:</b> {item.summary}</p>
             </div>
 
@@ -175,7 +207,7 @@ function App() {
         ))}
       </div>
 
-      {/* Favorites */}
+      {/* ❤️ Favorites */}
       <h2>❤️ Favorites</h2>
 
       <div className="news-grid">
