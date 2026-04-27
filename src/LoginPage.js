@@ -8,10 +8,18 @@ function LoginPage({ onLogin }) {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const BASE_URL =
+    "https://personalized-news-aggregator-with-bias.onrender.com/api/users";
+
+  // 🔐 Login
   const loginUser = () => {
     setLoading(true);
+
     axios
-      .post("http://localhost:8080/api/users/login", { email, password })
+      .post(`${BASE_URL}/login`, {
+        email,
+        password,
+      })
       .then((res) => {
         localStorage.setItem("token", res.data);
         onLogin();
@@ -20,48 +28,85 @@ function LoginPage({ onLogin }) {
       .finally(() => setLoading(false));
   };
 
+  // 👤 Register
   const registerUser = () => {
     setLoading(true);
+
     axios
-      .post("http://localhost:8080/api/users/register", { name, email, password })
+      .post(`${BASE_URL}/register`, {
+        name,
+        email,
+        password,
+      })
       .then(() => {
-        alert("Account created successfully.");
+        alert("Account created successfully ✅");
+
         setIsRegister(false);
-        setName(""); setEmail(""); setPassword("");
+        setName("");
+        setEmail("");
+        setPassword("");
       })
       .catch(() => alert("Registration failed. Please try again."))
       .finally(() => setLoading(false));
   };
 
   const features = [
-    { icon: "😊", name: "Sentiment Analysis", desc: "Real-time emotional tone scoring on every article" },
-    { icon: "⚖️", name: "Bias Detection",     desc: "Political and editorial slant identification" },
-    { icon: "🚨", name: "Fake News Check",    desc: "AI-powered credibility verification engine" },
-    { icon: "📊", name: "Smart Dashboard",    desc: "Live analytics across your personalized feed" },
-    { icon: "👤", name: "Personalized Feed",  desc: "Topic-based curation tailored to your interests" },
-    { icon: "🌙", name: "Dark Mode",          desc: "Easy-on-the-eyes night reading experience" },
+    {
+      icon: "😊",
+      name: "Sentiment Analysis",
+      desc: "Real-time emotional scoring for articles",
+    },
+    {
+      icon: "⚖️",
+      name: "Bias Detection",
+      desc: "Detect political/editorial slant",
+    },
+    {
+      icon: "🚨",
+      name: "Fake News Check",
+      desc: "AI-powered credibility verification",
+    },
+    {
+      icon: "📊",
+      name: "Smart Dashboard",
+      desc: "Live analytics on your news feed",
+    },
+    {
+      icon: "👤",
+      name: "Personalized Feed",
+      desc: "Curated news based on interests",
+    },
+    {
+      icon: "🌙",
+      name: "Dark Mode",
+      desc: "Comfortable night reading UI",
+    },
   ];
 
   return (
     <div className="login-page">
-      {/* Background Grid */}
-      <div className="login-bg-grid" />
-      <div className="login-bg-glow" />
+      {/* Background */}
+      <div className="login-bg-grid"></div>
+      <div className="login-bg-glow"></div>
 
-      {/* Masthead */}
+      {/* Header */}
       <header className="login-masthead">
         <div className="login-masthead-rule">
-          <div className="login-masthead-rule-line" />
-          <div className="login-masthead-rule-diamond" />
-          <div className="login-masthead-rule-line" />
+          <div className="login-masthead-rule-line"></div>
+          <div className="login-masthead-rule-diamond"></div>
+          <div className="login-masthead-rule-line"></div>
         </div>
+
         <h1 className="login-title">
-          The <span>Intelligence</span> Bureau
+          Personalized <span>News Aggregator</span>
         </h1>
-        <p className="login-subtitle">AI-Powered News Analysis Platform</p>
+
+        <p className="login-subtitle">
+          AI Powered News Analysis Platform
+        </p>
       </header>
 
-      {/* Cards */}
+      {/* Main Section */}
       <div className="login-wrapper">
 
         {/* Auth Card */}
@@ -69,76 +114,118 @@ function LoginPage({ onLogin }) {
           <h2 className="login-card-title">
             {isRegister ? "Create Account" : "Sign In"}
           </h2>
+
           <p className="login-card-sub">
-            {isRegister ? "Join the bureau" : "Access your feed"}
+            {isRegister
+              ? "Join the platform"
+              : "Access your smart dashboard"}
           </p>
 
+          {/* Name */}
           {isRegister && (
             <div className="form-group">
               <label className="form-label">Full Name</label>
+
               <input
                 type="text"
-                placeholder="Your full name"
+                placeholder="Enter full name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
               />
             </div>
           )}
 
+          {/* Email */}
           <div className="form-group">
-            <label className="form-label">Email Address</label>
+            <label className="form-label">Email</label>
+
             <input
               type="email"
-              placeholder="you@example.com"
+              placeholder="Enter email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
           </div>
 
+          {/* Password */}
           <div className="form-group">
             <label className="form-label">Password</label>
+
             <input
               type="password"
-              placeholder="••••••••"
+              placeholder="Enter password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && !isRegister && loginUser()}
+              onKeyDown={(e) =>
+                e.key === "Enter" &&
+                !isRegister &&
+                loginUser()
+              }
             />
           </div>
 
+          {/* Submit */}
           <button
             className="login-submit-btn"
             onClick={isRegister ? registerUser : loginUser}
             disabled={loading}
           >
-            {loading ? "Processing..." : isRegister ? "Create Account" : "Sign In"}
+            {loading
+              ? "Processing..."
+              : isRegister
+              ? "Create Account"
+              : "Sign In"}
           </button>
 
+          {/* Toggle */}
           <div className="login-toggle">
             <p className="login-toggle-text">
-              {isRegister ? "Already have an account?" : "Don't have an account?"}
+              {isRegister
+                ? "Already have an account?"
+                : "Don't have an account?"}
             </p>
+
             <button
               className="login-toggle-btn"
-              onClick={() => setIsRegister(!isRegister)}
+              onClick={() =>
+                setIsRegister(!isRegister)
+              }
             >
-              {isRegister ? "Go to Sign In" : "Create Account"}
+              {isRegister
+                ? "Go to Sign In"
+                : "Create Account"}
             </button>
           </div>
         </div>
 
         {/* Features Card */}
         <div className="feature-card">
-          <h2 className="feature-card-title">Platform Features</h2>
-          <p className="feature-card-sub">What you get with access</p>
+          <h2 className="feature-card-title">
+            Platform Features
+          </h2>
+
+          <p className="feature-card-sub">
+            What you get with access
+          </p>
 
           <div className="feature-list">
-            {features.map((f, i) => (
-              <div className="feature-item" key={i}>
-                <div className="feature-item-icon">{f.icon}</div>
+            {features.map((item, index) => (
+              <div
+                className="feature-item"
+                key={index}
+              >
+                <div className="feature-item-icon">
+                  {item.icon}
+                </div>
+
                 <div>
-                  <div className="feature-item-name">{f.name}</div>
-                  <div className="feature-item-desc">{f.desc}</div>
+                  <div className="feature-item-name">
+                    {item.name}
+                  </div>
+
+                  <div className="feature-item-desc">
+                    {item.desc}
+                  </div>
                 </div>
               </div>
             ))}
