@@ -164,8 +164,12 @@ function App() {
   const userEmail = "lohit@gmail.com";
 
   useEffect(() => {
-    if (isLoggedIn) { loadNews(); loadFavorites(); }
-  }, [isLoggedIn]);
+  if (isLoggedIn) {
+    loadNews();
+    loadFavorites();
+  }
+// eslint-disable-next-line
+}, [isLoggedIn]);
 
   const loadNews = () => {
     getNews(keyword)
