@@ -1,6 +1,7 @@
 import axios from "axios";
 
-const API_URL = "https://personalized-news-aggregator-with-bias.onrender.com/api/news";
+const API_URL =
+  "https://personalized-news-aggregator-with-bias.onrender.com/api/news";
 
 const getAuthHeader = () => {
   return {
@@ -11,15 +12,22 @@ const getAuthHeader = () => {
 };
 
 export const saveFavorite = (fav) => {
-  return axios.post("http://localhost:8080/api/favorites", fav);
+  return axios.post(
+    "https://personalized-news-aggregator-with-bias.onrender.com/api/favorites",
+    fav,
+    getAuthHeader()
+  );
 };
 
 export const getFavorites = (email) => {
-  return axios.get(`http://localhost:8080/api/favorites/${email}`);
+  return axios.get(
+    `https://personalized-news-aggregator-with-bias.onrender.com/api/favorites/${email}`,
+    getAuthHeader()
+  );
 };
 
 export const getNews = (keyword, category) => {
-  let url = "http://localhost:8080/api/news";
+  let url = API_URL;
 
   if (keyword) {
     url += `?keyword=${keyword}`;
@@ -29,4 +37,3 @@ export const getNews = (keyword, category) => {
 
   return axios.get(url, getAuthHeader());
 };
-
