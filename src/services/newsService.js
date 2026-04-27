@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "https://your-backend.onrender.com/api/news";
+const API_URL = "https://personalized-news-aggregator-with-bias.onrender.com/api/news";
 
 const getAuthHeader = () => {
   return {
